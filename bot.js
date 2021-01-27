@@ -43,13 +43,13 @@ function give_me_a_yahoo(){
 }
 
 
-function gay_cat(){
-    twt.get('statuses/user_timeline', {screen_name: 'gayocats', count: '1', trim_user: 'true'}, function(error, tweets, response) {
+function gay_cat(quant,index){
+    twt.get('statuses/user_timeline', {screen_name: 'gayocats', count: quant.toString(), trim_user: 'true'}, function(error, tweets, response) {
         if(error) throw error;
         console.log(tweets[0].text);  
         //console.log(response);  
     });
-    return tweets[0].text;
+    return tweets[index].text;
 }
 
 
@@ -57,7 +57,7 @@ function gay_cat(){
 const START_DATE = '2021-01-27';        // Date used as the starting point for multi-hour intervals, must be YYYY-MM-DD format
 const START_HOUR = 9;                   // Hour of the day when the timer begins (0 is 12am, 23 is 11pm), used with START_DATE and INTERVAL_HOURS param
 const INTERVAL_HOURS = 1;               // Trigger at an interval of every X hours
-const TARGET_MINUTE = 0;                // Minute of the hour when the chest will refresh, 30 means 1:30, 2:30, etc.
+const TARGET_MINUTE = 11;               // Minute of the hour when the chest will refresh, 30 means 1:30, 2:30, etc.
 const OFFSET = 0;                       // Notification will warn that the target is X minutes away
 
 const NOTIFY_MINUTE = (TARGET_MINUTE < OFFSET ? 60 : 0) + TARGET_MINUTE - OFFSET;
@@ -77,7 +77,7 @@ setInterval(function() {
     
     if (!channel) return;                                                               // Do nothing if the channel wasn't found
     
-    channel.send(gay_cat());                                                            // Do the thing if all conditions are met
+    channel.send(gay_cat(1,0));                                                         // Do the thing if all conditions are met
 
 }, 60 * 1000);                                                                          // Check every minute
 
@@ -88,10 +88,6 @@ client.on('ready', () => {
 
 
 client.on('message', message => {
-    
-    if (message.content === 'ping') {
-       message.reply('pong');
-    }
 
     if (message.content.indexOf('!terezify') == 0) {
         let submsg = message.slice(9,message.length);
@@ -102,6 +98,20 @@ client.on('message', message => {
        message.reply(give_me_a_yahoo());
     };
 
+    if (message.content === '!gaycat') {
+        let num = 20;
+        let i = irandom_range(0,num);
+        message.reply(gay_cat(num,i));
+    };
+
+    if (message.content.indexOf('!lasttweet') == 0) {
+        let msg_array = message.split(' ');
+        twt.get('statuses/user_timeline', {screen_name: msg_array[1], count: '1', trim_user: 'true'}, function(error, tweets, response) {
+            if(error) throw error;
+            console.log(tweets[0].text);  
+        });
+        message.reply(tweets[0].text);
+    };
 });
 
 client.login(process.env.BOT_TOKEN); // BOT_TOKEN is the Client Secret
