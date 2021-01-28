@@ -44,10 +44,8 @@ function give_me_a_yahoo(){
 function gay_cat(quant,index){
     twt.get('statuses/user_timeline', {screen_name: 'gayocats', count: quant.toString(), trim_user: 'true'}, function(error, tweets, response) {
         if(error) throw error;
-        console.log(tweets[0].text);  
-        //console.log(response);  
+        return tweets[index].text;
     });
-    return tweets[index].text;
 }
 
 function channel(name){
@@ -107,9 +105,8 @@ client.on('message', message => {
         let msg_array = message.split(' ');
         twt.get('statuses/user_timeline', {screen_name: msg_array[1], count: '1', trim_user: 'true'}, function(error, tweets, response) {
             if(error) throw error;
-            console.log(tweets[0].text);  
+            message.reply(tweets[0].text);
         });
-        message.reply(tweets[0].text);
     };
 });
 
