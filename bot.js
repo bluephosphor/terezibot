@@ -81,7 +81,7 @@ client.on('ready', () => {
 
 client.on('message', message => {
 
-    if (message.content.indexOf('${prefix}terezify') == 0) {        //this one is so specific i wanted to do it before all of the splicing
+    if (message.content.indexOf('!terezify') == 0) {        //this one is so specific i wanted to do it before all of the splicing
         let submsg = message.content.slice(9,message.length);
         message.channel.send(terezify(submsg));
         return;
@@ -100,7 +100,7 @@ client.on('message', message => {
         let i = irandom_range(0,num);
         twt.get('statuses/user_timeline', {screen_name: args[0], count: num.toString, trim_user: 'true'}, function(error, tweets, response) {
             if(error) throw error;
-            message.channel.send(tweets[index].text);
+            message.channel.send(tweets[i].text);
         });
     
     } else if (command === 'lasttweet') {
