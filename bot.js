@@ -50,7 +50,7 @@ function gay_cat(quant,index){
     });
 }
 
-function channel(name){
+function get_channel(name){
     let c = member.guild.channels.cache.find(ch => ch.name === name);
     if (!c) return;
     else return c; 
@@ -76,7 +76,7 @@ setInterval(function() {
     
     if(d.getMinutes() !== NOTIFY_MINUTE) return;                                        // Return if current minute is not the notify minute
     
-    channel('gay-cats').send(gay_cat(1,0));                                             // Do the thing if all conditions are met
+    get_channel('gay-cats').send(gay_cat(1,0));                                             // Do the thing if all conditions are met
 
 }, 60 * 1000);                                                                          // Check every minute
 
@@ -88,16 +88,18 @@ client.on('ready', () => {
 
 client.on('message', message => {
 
+    if (message.content.indexOf('${prefix}terezify') == 0) {        //this one is so specific i wanted to do it before all of the splicing
+        let submsg = message.content.slice(9,message.length);
+        message.channel.send(terezify(submsg));
+        return;
+    }
+    
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
-
-    if (message.content.indexOf('${prefix}terezify') == 0) {
-        let submsg = message.content.slice(9,message.length);
-        message.channel.send(terezify(submsg));
     
-    } else if (command === 'yahoo') {
+    if (command === 'yahoo') {
        message.channel.send(give_me_a_yahoo());
     
     } else if (command === 'gaycat') {
