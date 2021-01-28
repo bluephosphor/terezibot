@@ -1,6 +1,8 @@
-const Discord = require('discord.js');
-const Twitter = require('twitter');
-const finalyahoos = require('./finalyahoos.json');
+// Initialize dependencies //----------------------------------------------------------
+const Discord       = require('discord.js');
+const Twitter       = require('twitter');
+const finalyahoos   = require('./finalyahoos.json');
+const { prefix }    = require('./config.json');
 
 const client = new Discord.Client();
 const twt = new Twitter({
@@ -86,28 +88,39 @@ client.on('ready', () => {
 
 client.on('message', message => {
 
-    if (message.content.indexOf('!terezify') == 0) {
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+    const args = message.content.slice(prefix.length).trim().split(' ');
+    const command = args.shift().toLowerCase();
+
+    if (message.content.indexOf('${prefix}terezify') == 0) {
         let submsg = message.content.slice(9,message.length);
-        message.reply(terezify(submsg));
-    };
-
-    if (message.content === '!yahoo') {
-       message.reply(give_me_a_yahoo());
-    };
-
-    if (message.content === '!gaycat') {
+        message.channel.send(terezify(submsg));
+    
+    } else if (command === 'yahoo') {
+       message.channel.send(give_me_a_yahoo());
+    
+    } else if (command === 'gaycat') {
         let num = 20;
         let i = irandom_range(0,num);
-        message.reply(gay_cat(num,i));
-    };
-
-    if (message.content.indexOf('!lasttweet') == 0) {
-        let msg_array = message.content.split(' ');
-        twt.get('statuses/user_timeline', {screen_name: msg_array[1], count: '1', trim_user: 'true'}, function(error, tweets, response) {
+        message.channel.send(gay_cat(num,i));
+    
+    } else if (command === 'lasttweet') {
+        twt.get('statuses/user_timeline', {screen_name: args[0], count: '1', trim_user: 'true'}, function(error, tweets, response) {
             if(error) throw error;
-            message.reply(tweets[0].text);
+            message.channel.send(tweets[0].text);
         });
-    };
+    
+    } else if (command === 'server') {
+        message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
+    
+    } else if (command === 'args-info') {
+        if (!args.length) {
+            return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
+        }
+    
+        message.channel.send(`Command name: ${command}\nArguments: ${args}`);
+    }
 });
 
 client.login(process.env.BOT_TOKEN); // BOT_TOKEN is the Client Secret
