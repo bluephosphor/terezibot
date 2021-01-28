@@ -89,7 +89,7 @@ client.on('ready', () => {
 client.on('message', message => {
 
     if (message.content.indexOf('!terezify') == 0) {
-        let submsg = message.slice(9,message.length);
+        let submsg = message.content.slice(9,message.length);
         message.reply(terezify(submsg));
     };
 
