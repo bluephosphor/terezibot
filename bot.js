@@ -9,7 +9,7 @@ const twt = new Twitter({
     consumer_key:           process.env.TWITTER_CONSUMER_KEY,
     consumer_secret:        process.env.TWITTER_CONSUMER_SECRET,
     access_token_key:       process.env.TWITTER_ACCESS_TOKEN_KEY,
-    access_token_secret:    process.env.TWITTER_CONSUMER_SECRET
+    access_token_secret:    process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
 // Initialize global functions //-------------------------------------------------------
@@ -90,7 +90,7 @@ client.on('message', message => {
 
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const args = message.content.slice(prefix.length).trim().split(' ');
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
 
     if (message.content.indexOf('${prefix}terezify') == 0) {
