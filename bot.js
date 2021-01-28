@@ -33,7 +33,6 @@ function terezify(str) {
     return endstr;
 };
 
-
 function give_me_a_yahoo(){
     let index       = irandom_range(0,finalyahoos.length);
     let question    = finalyahoos[index][0];
@@ -41,7 +40,6 @@ function give_me_a_yahoo(){
     
     return terezify(question);
 }
-
 
 function gay_cat(quant,index){
     twt.get('statuses/user_timeline', {screen_name: 'gayocats', count: quant.toString(), trim_user: 'true'}, function(error, tweets, response) {
@@ -52,6 +50,11 @@ function gay_cat(quant,index){
     return tweets[index].text;
 }
 
+function channel(name){
+    let c = member.guild.channels.cache.find(ch => ch.name === name);
+    if (!c) return;
+    else return c; 
+}
 
 // Timer //-------------------------------------------------------------------------------
 const START_DATE = '2021-01-27';        // Date used as the starting point for multi-hour intervals, must be YYYY-MM-DD format
@@ -73,11 +76,7 @@ setInterval(function() {
     
     if(d.getMinutes() !== NOTIFY_MINUTE) return;                                        // Return if current minute is not the notify minute
     
-    const channel = member.guild.channels.cache.find(ch => ch.name === 'gay-cats');     // Find channel
-    
-    if (!channel) return;                                                               // Do nothing if the channel wasn't found
-    
-    channel.send(gay_cat(1,0));                                                         // Do the thing if all conditions are met
+    channel('gay-cats').send(gay_cat(1,0));                                             // Do the thing if all conditions are met
 
 }, 60 * 1000);                                                                          // Check every minute
 
