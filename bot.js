@@ -1,10 +1,20 @@
 // Initialize dependencies //----------------------------------------------------------
+const fs = require ('fs'); 
 const Discord       = require('discord.js');
 const Twitter       = require('twitter');
 const finalyahoos   = require('./finalyahoos.json');
 const { prefix }    = require('./config.json');
 
 const client = new Discord.Client();
+client.commands = new Discord.Collection();
+
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	client.commands.set(command.name, command);
+}
+
 const twt = new Twitter({
     consumer_key:           process.env.TWITTER_CONSUMER_KEY,
     consumer_secret:        process.env.TWITTER_CONSUMER_SECRET,
@@ -16,8 +26,6 @@ const twt = new Twitter({
 function irandom_range(min,max){
     return Math.floor(Math.random() * (max - min) ) + min;
 }
-  
-
 
 function terezify(str) {
     var endstr = str.toUpperCase();
@@ -69,7 +77,7 @@ setInterval(function() {
     
     if(d.getMinutes() !== NOTIFY_MINUTE) return;                                        // Return if current minute is not the notify minute
     
-    //get_channel('gay-cats').send(gay_cat(1,0));                                             // Do the thing if all conditions are met
+    //get_channel('gay-cats').send(gay_cat(1,0));                                       // Do the thing if all conditions are met
 
 }, 60 * 1000);                                                                          // Check every minute
 
@@ -91,47 +99,16 @@ client.on('message', message => {
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
-    
-    if (command === 'yahoo') {
-       message.channel.send(give_me_a_yahoo());
-    
-    } else if (command === 'gaycat') {
-        let num = 20;
-        let i = irandom_range(0,num);
-        twt.get('statuses/user_timeline', {screen_name: 'gayocats', count: num.toString, trim_user: 'true'}, function(error, tweets, response) {
-            if(error) throw error;
-            message.channel.send(tweets[i].text);
-        });
-    
-    } else if (command === 'lasttweet') {
-        twt.get('statuses/user_timeline', {screen_name: args[0], count: '1', trim_user: 'true'}, function(error, tweets, response) {
-            if(error) throw error;
-            message.channel.send(tweets[0].text);
-        });
-    
-    } else if (command === 'server') {
-        message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
-    
-    } else if (command === 'args-info') {
-        if (!args.length) {
-            return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
-        }
-    
-        message.channel.send(`Command name: ${command}\nArguments: ${args}`);
-    } else if (command === 'prune') {
-		const amount = parseInt(args[0]) + 1;
 
-		if (isNaN(amount)) {
-			return message.reply('that doesn\'t seem to be a valid number.');
-		} else if (amount <= 1 || amount > 100) {
-			return message.reply('you need to input a number between 1 and 99.');
-		}
+    if (!client.commands.has(command)) return;
 
-		message.channel.bulkDelete(amount, true).catch(err => {
-			console.error(err);
-			message.channel.send('there was an error trying to prune messages in this channel!');
-		});
+    try {
+        client.commands.get(command).execute(message, args);
+    } catch (error) {
+        console.error(error);
+        message.reply('there was an error trying to execute that command!');
     }
+    
 });
 
 client.login(process.env.BOT_TOKEN); // BOT_TOKEN is the Client Secret
