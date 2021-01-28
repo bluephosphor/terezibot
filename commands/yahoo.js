@@ -1,3 +1,5 @@
+const finalyahoos = require('./finalyahoos.json');
+
 module.exports = {
 	name: 'yahoo',
 	description: 'Gets a random yahoo answers question.',

@@ -2,7 +2,6 @@
 const fs = require ('fs'); 
 const Discord       = require('discord.js');
 const Twitter       = require('twitter');
-const finalyahoos   = require('./finalyahoos.json');
 const { prefix }    = require('./config.json');
 
 const client = new Discord.Client();
