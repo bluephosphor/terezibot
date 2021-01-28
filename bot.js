@@ -43,13 +43,6 @@ function give_me_a_yahoo(){
     return terezify(question);
 }
 
-function gay_cat(quant,index){
-    twt.get('statuses/user_timeline', {screen_name: 'gayocats', count: quant.toString(), trim_user: 'true'}, function(error, tweets, response) {
-        if(error) throw error;
-        return tweets[index].text;
-    });
-}
-
 function get_channel(name){
     let c = member.guild.channels.cache.find(ch => ch.name === name);
     if (!c) return;
@@ -76,7 +69,7 @@ setInterval(function() {
     
     if(d.getMinutes() !== NOTIFY_MINUTE) return;                                        // Return if current minute is not the notify minute
     
-    get_channel('gay-cats').send(gay_cat(1,0));                                             // Do the thing if all conditions are met
+    //get_channel('gay-cats').send(gay_cat(1,0));                                             // Do the thing if all conditions are met
 
 }, 60 * 1000);                                                                          // Check every minute
 
@@ -105,7 +98,10 @@ client.on('message', message => {
     } else if (command === 'gaycat') {
         let num = 20;
         let i = irandom_range(0,num);
-        message.channel.send(gay_cat(num,i));
+        twt.get('statuses/user_timeline', {screen_name: args[0], count: num.toString, trim_user: 'true'}, function(error, tweets, response) {
+            if(error) throw error;
+            message.channel.send(tweets[index].text);
+        });
     
     } else if (command === 'lasttweet') {
         twt.get('statuses/user_timeline', {screen_name: args[0], count: '1', trim_user: 'true'}, function(error, tweets, response) {
