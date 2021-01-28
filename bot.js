@@ -102,7 +102,7 @@ client.on('message', message => {
     };
 
     if (message.content.indexOf('!lasttweet') == 0) {
-        let msg_array = message.split(' ');
+        let msg_array = message.content.split(' ');
         twt.get('statuses/user_timeline', {screen_name: msg_array[1], count: '1', trim_user: 'true'}, function(error, tweets, response) {
             if(error) throw error;
             message.reply(tweets[0].text);
